@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def graphicalComparisonPdf(X, modelPdf, scale = True, xMin = None, xMax = None):
+def graphicalComparisonPdf(X, modelPdf, scale = True, xMin = None, xMax = None, axes_object=None):
     _X = X[np.logical_not(np.isnan(X))]
     if xMax is None:
         xMax = np.max(_X) # default parameter of xMax
@@ -19,9 +19,13 @@ def graphicalComparisonPdf(X, modelPdf, scale = True, xMin = None, xMax = None):
     pdfScaleFactor = areaHistogram if not scale else 1 
     # if scale = False we rescale modelPDF(x) by the area of the histogram
     # if scale = True the histogram is scaled, such that its area is 1 (as is the case for modelPDF(x))
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+	
+    if axes_object is None:
+	    fig = plt.figure()
+	    ax = fig.add_subplot(111)
+    else:
+	    ax = axes_object
+	
     _, _, p = plt.hist(_X, bins=nBins, normed = scale)
     l, = plt.plot(xPlot, yPlot * pdfScaleFactor, 'r', linewidth=3)
     
@@ -31,4 +35,4 @@ def graphicalComparisonPdf(X, modelPdf, scale = True, xMin = None, xMax = None):
         plt.legend([l, p[0]], ['pdf(x)', 'scaled histogram'])
     else:
         plt.legend([l, p[0]], ['scaled pdf(x)', 'histogram'])
-    plt.show()
+    return ax
